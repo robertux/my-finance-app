@@ -26,7 +26,26 @@ public class TransaccionService {
         return transaccionRepository.save(transaccion);
     }
 
-    public void deleteById(Long id) {
-        transaccionRepository.deleteById(id);
+    public boolean deleteById(Long id) {
+        if (transaccionRepository.existsById(id)) {
+            transaccionRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+    public Optional<Transaccion> update(Long id, Transaccion transaccionDetails) {
+        return transaccionRepository.findById(id)
+            .map(transaccion -> {
+                transaccion.setCuentaId(transaccionDetails.getCuentaId());
+                transaccion.setMonto(transaccionDetails.getMonto());
+                transaccion.setTipo(transaccionDetails.getTipo());
+                transaccion.setFecha(transaccionDetails.getFecha());
+                transaccion.setEstado(transaccionDetails.getEstado());
+                transaccion.setDescripcion(transaccionDetails.getDescripcion());
+                transaccion.setConfirmacion(transaccionDetails.getConfirmacion());
+                transaccion.setEtiqueta(transaccionDetails.getEtiqueta());
+                return transaccionRepository.save(transaccion);
+            });
     }
 }

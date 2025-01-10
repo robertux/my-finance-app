@@ -1,3 +1,5 @@
+package com.myfinance.model;
+
 public class Usuario {
     private Long id;
     private String nombre;

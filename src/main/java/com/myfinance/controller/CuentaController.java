@@ -17,29 +17,34 @@ public class CuentaController {
 
     @GetMapping
     public List<Cuenta> getAllCuentas() {
-        return cuentaService.getAllCuentas();
+        return cuentaService.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Cuenta> getCuentaById(@PathVariable(value = "id") Long cuentaId) {
-        Cuenta cuenta = cuentaService.getCuentaById(cuentaId);
-        return ResponseEntity.ok().body(cuenta);
+        return cuentaService.findById(cuentaId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public Cuenta createCuenta(@RequestBody Cuenta cuenta) {
-        return cuentaService.createCuenta(cuenta);
+        return cuentaService.save(cuenta);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Cuenta> updateCuenta(@PathVariable(value = "id") Long cuentaId, @RequestBody Cuenta cuentaDetails) {
-        Cuenta updatedCuenta = cuentaService.updateCuenta(cuentaId, cuentaDetails);
-        return ResponseEntity.ok(updatedCuenta);
+        return cuentaService.update(cuentaId, cuentaDetails)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCuenta(@PathVariable(value = "id") Long cuentaId) {
-        cuentaService.deleteCuenta(cuentaId);
-        return ResponseEntity.noContent().build();
+        if (cuentaService.deleteById(cuentaId)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

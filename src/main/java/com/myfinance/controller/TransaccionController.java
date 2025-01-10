@@ -17,34 +17,33 @@ public class TransaccionController {
 
     @GetMapping
     public List<Transaccion> getAllTransacciones() {
-        return transaccionService.getAllTransacciones();
+        return transaccionService.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Transaccion> getTransaccionById(@PathVariable Long id) {
-        return transaccionService.getTransaccionById(id)
+        return transaccionService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public Transaccion createTransaccion(@RequestBody Transaccion transaccion) {
-        return transaccionService.createTransaccion(transaccion);
+        return transaccionService.save(transaccion);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Transaccion> updateTransaccion(@PathVariable Long id, @RequestBody Transaccion transaccion) {
-        return transaccionService.updateTransaccion(id, transaccion)
+        return transaccionService.update(id, transaccion)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTransaccion(@PathVariable Long id) {
-        if (transaccionService.deleteTransaccion(id)) {
+        if (transaccionService.deleteById(id)) {
             return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.notFound().build();
     }
 }

@@ -1,0 +1,13 @@
+com/myfinance/controller/UsuarioController.class
+com/myfinance/repository/UsuarioRepository.class
+com/myfinance/controller/CuentaController.class
+com/myfinance/repository/CuentaRepository.class
+com/myfinance/model/Usuario.class
+com/myfinance/repository/TransaccionRepository.class
+com/myfinance/service/UsuarioService.class
+com/myfinance/model/Cuenta.class
+com/myfinance/model/Transaccion.class
+com/myfinance/controller/TransaccionController.class
+com/myfinance/service/TransaccionService.class
+com/myfinance/service/CuentaService.class
+com/myfinance/MyFinanceApplication.class

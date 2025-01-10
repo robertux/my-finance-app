@@ -1,3 +1,7 @@
+package com.myfinance.model;
+
+import java.math.BigDecimal;
+
 public class Cuenta {
     private Long id;
     private Integer numero;

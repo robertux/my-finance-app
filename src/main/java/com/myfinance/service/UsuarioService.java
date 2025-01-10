@@ -29,4 +29,21 @@ public class UsuarioService {
     public void deleteById(Long id) {
         usuarioRepository.deleteById(id);
     }
+
+    public Optional<Usuario> update(Long id, Usuario usuarioDetails) {
+        return usuarioRepository.findById(id).map(usuario -> {
+            usuario.setNombre(usuarioDetails.getNombre());
+            usuario.setCorreo(usuarioDetails.getCorreo());
+            usuario.setPassword(usuarioDetails.getPassword());
+            usuario.setEstado(usuarioDetails.getEstado());
+            return usuarioRepository.save(usuario);
+        });
+    }
+
+    public boolean delete(Long id) {
+        return usuarioRepository.findById(id).map(usuario -> {
+            usuarioRepository.deleteById(id);
+            return true;
+        }).orElse(false);
+    }
 }

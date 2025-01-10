@@ -26,16 +26,23 @@ public class CuentaService {
         return cuentaRepository.save(cuenta);
     }
 
-    public void deleteById(Long id) {
-        cuentaRepository.deleteById(id);
+    public boolean deleteById(Long id) {
+        if (cuentaRepository.existsById(id)) {
+            cuentaRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public Cuenta update(Long id, Cuenta cuentaDetails) {
-        Cuenta cuenta = cuentaRepository.findById(id).orElseThrow(() -> new RuntimeException("Cuenta not found"));
-        cuenta.setNumero(cuentaDetails.getNumero());
-        cuenta.setEstado(cuentaDetails.getEstado());
-        cuenta.setSaldo(cuentaDetails.getSaldo());
-        cuenta.setUsuarioId(cuentaDetails.getUsuarioId());
-        return cuentaRepository.save(cuenta);
+    public Optional<Cuenta> update(Long id, Cuenta cuentaDetails) {
+        return cuentaRepository.findById(id)
+            .map(cuenta -> {
+                cuenta.setNumero(cuentaDetails.getNumero());
+                cuenta.setEstado(cuentaDetails.getEstado());
+                cuenta.setSaldo(cuentaDetails.getSaldo());
+                cuenta.setUsuarioId(cuentaDetails.getUsuarioId());
+                return cuentaRepository.save(cuenta);
+            });
     }
 }
