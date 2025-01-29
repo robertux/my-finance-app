@@ -6,7 +6,6 @@ import com.myfinance.repository.TransaccionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +38,7 @@ public class TransaccionService {
     }
 
     public List<Transaccion> findAll() {
-        return transaccionRepository.findAll();
+        return transaccionRepository.findByEstado("A");
     }
 
     public Optional<Transaccion> findById(Long id) {

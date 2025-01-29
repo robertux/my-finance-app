@@ -19,6 +19,10 @@ public class CuentaService {
         return cuentaRepository.findAll();
     }
 
+    public List<Cuenta> findAllActive() {
+        return cuentaRepository.findByEstado('A');
+    }
+
     public Optional<Cuenta> findById(Long id) {
         return cuentaRepository.findById(id);
     }
@@ -28,12 +32,13 @@ public class CuentaService {
     }
 
     public boolean deleteById(Long id) {
-        if (cuentaRepository.existsById(id)) {
-            cuentaRepository.deleteById(id);
-            return true;
-        } else {
+            Optional<Cuenta> cuenta = cuentaRepository.findById(id);
+            if (cuenta.isPresent()) {
+                Cuenta cuentaToUpdate = cuenta.get();
+                cuentaToUpdate.setEstado('D');
+                return cuentaRepository.save(cuentaToUpdate) != null;
+            }
             return false;
-        }
     }
 
     private void validateBalance(BigDecimal newBalance) {
