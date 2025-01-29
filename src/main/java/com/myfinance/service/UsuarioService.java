@@ -18,20 +18,24 @@ public class UsuarioService {
     private PasswordService passwordService;
 
     public List<Usuario> findAll() {
-        return usuarioRepository.findAll();
+        return usuarioRepository.findByEstado('A');
     }
 
     public Optional<Usuario> findById(Long id) {
         return usuarioRepository.findById(id);
     }
 
+    public Optional<Usuario> findByUsuario(String usuario) {
+        return usuarioRepository.findByUsuario(usuario);
+    }
+
+    public Optional<Usuario> findByCorreo(String correo) {
+        return usuarioRepository.findByCorreo(correo);
+    }
+
     public Usuario save(Usuario usuario) {
         usuario.setPassword(passwordService.encryptPassword(usuario.getPassword()));
         return usuarioRepository.save(usuario);
-    }
-
-    public void deleteById(Long id) {
-        usuarioRepository.deleteById(id);
     }
 
     public Optional<Usuario> update(Long id, Usuario usuarioDetails) {
