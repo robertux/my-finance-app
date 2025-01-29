@@ -14,6 +14,9 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordService passwordService;
+
     public List<Usuario> findAll() {
         return usuarioRepository.findAll();
     }
@@ -23,6 +26,7 @@ public class UsuarioService {
     }
 
     public Usuario save(Usuario usuario) {
+        usuario.setPassword(passwordService.encryptPassword(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
 
@@ -34,7 +38,9 @@ public class UsuarioService {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setNombre(usuarioDetails.getNombre());
             usuario.setCorreo(usuarioDetails.getCorreo());
-            usuario.setPassword(usuarioDetails.getPassword());
+            if (usuarioDetails.getPassword() != null) {
+                usuario.setPassword(passwordService.encryptPassword(usuarioDetails.getPassword()));
+            }
             usuario.setEstado(usuarioDetails.getEstado());
             return usuarioRepository.save(usuario);
         });
@@ -45,5 +51,11 @@ public class UsuarioService {
             usuarioRepository.deleteById(id);
             return true;
         }).orElse(false);
+    }
+
+    public boolean validateUserPassword(Long userId, String password) {
+        Optional<Usuario> usuario = usuarioRepository.findById(userId);
+        return usuario.map(u -> passwordService.validatePassword(password, u.getPassword()))
+                     .orElse(false);
     }
 }
