@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.math.BigDecimal;
 
 @Service
 public class CuentaService {
@@ -35,9 +36,23 @@ public class CuentaService {
         }
     }
 
+    private void validateBalance(BigDecimal newBalance) {
+        if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Account balance cannot be negative");
+        }
+    }
+
+    private void validateAccountStatus(Character estado) {
+        if (estado != 'A') {
+            throw new IllegalStateException("Account is not active");
+        }
+    }
+
     public Optional<Cuenta> update(Long id, Cuenta cuentaDetails) {
         return cuentaRepository.findById(id)
             .map(cuenta -> {
+                validateAccountStatus(cuenta.getEstado());
+                validateBalance(cuentaDetails.getSaldo());
                 cuenta.setNumero(cuentaDetails.getNumero());
                 cuenta.setEstado(cuentaDetails.getEstado());
                 cuenta.setSaldo(cuentaDetails.getSaldo());

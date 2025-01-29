@@ -1,10 +1,13 @@
 package com.myfinance.service;
 
 import com.myfinance.model.Transaccion;
+import com.myfinance.model.Cuenta;
 import com.myfinance.repository.TransaccionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +16,27 @@ public class TransaccionService {
 
     @Autowired
     private TransaccionRepository transaccionRepository;
+
+    @Autowired
+    private CuentaService cuentaService;
+
+    private void validateTransactionDate(Timestamp fecha) {
+        if (fecha.after(new Timestamp(System.currentTimeMillis()))) {
+            throw new IllegalArgumentException("Transaction date cannot be in the future");
+        }
+    }
+
+    private void validateTransactionAmount(Double monto) {
+        if (monto <= 0) {
+            throw new IllegalArgumentException("Transaction amount must be positive");
+        }
+    }
+
+    private void validateSufficientFunds(Cuenta cuenta, Double monto, String tipo) {
+        if (tipo.equals("D") && cuenta.getSaldo().doubleValue() < monto) {
+            throw new IllegalStateException("Insufficient funds");
+        }
+    }
 
     public List<Transaccion> findAll() {
         return transaccionRepository.findAll();
@@ -23,6 +47,11 @@ public class TransaccionService {
     }
 
     public Transaccion save(Transaccion transaccion) {
+        validateTransactionDate(transaccion.getFecha());
+        validateTransactionAmount(transaccion.getMonto());
+        
+        Optional<Cuenta> cuenta = cuentaService.findById(transaccion.getCuentaId());
+        cuenta.ifPresent(c -> validateSufficientFunds(c, transaccion.getMonto(), transaccion.getTipo()));
         return transaccionRepository.save(transaccion);
     }
 
