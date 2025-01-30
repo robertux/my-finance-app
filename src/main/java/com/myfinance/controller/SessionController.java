@@ -36,4 +36,18 @@ public class SessionController {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestHeader("Authorization") String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            String jwt = token.substring(7);
+            if (jwtUtil.canTokenBeRefreshed(jwt)) {
+                String refreshedToken = jwtUtil.refreshToken(jwt);
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Authorization", "Bearer " + refreshedToken);
+                return ResponseEntity.ok().headers(headers).build();
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
 }
